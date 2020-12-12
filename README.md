@@ -14,14 +14,18 @@ cd ~/WorkSpace/ansible/ansible-prometheus-mqc/
 # Playbook sample
 
 promCompleteInstall.yml 
+
 ---
 - hosts: promservers
   user: root 
   become: yes
-  ## Variable to get user action ( install | uninstall| stop | start )
+
+// Variable to get user action ( install | uninstall| stop | start )  
+
   vars:
     user_action:
   roles:
+
 // installating ansible runtime - install location is /opt/insight/prometheus
 
     - role: ansible-prometheus 
