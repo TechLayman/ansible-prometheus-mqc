@@ -7,13 +7,13 @@ git clone https://github.com/TechLayman/ansible-prometheus-mqc
 
 cd ~/WorkSpace/ansible/ansible-prometheus-mqc/
 
-# run the playbook ( Example )
+// run the playbook ( Example )
 
 ~/WorkSpace/ansible/ansible-prometheus-mqc/playbooks$ ansible-playbook promCompleteInstall.yml -e user_action=install
 
 # Playbook sample
 
-cat promCompleteInstall.yml 
+promCompleteInstall.yml 
 ---
 - hosts: promservers
   user: root 
