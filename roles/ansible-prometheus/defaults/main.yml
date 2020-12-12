@@ -1,0 +1,23 @@
+---
+###########  defaults file for ansible-prometheus #########
+
+prometheus_install_path: /opt/insight/prometheus-{{ prometheus_version }}
+prometheus_retention_time: 30d
+prometheus_listen_address: '0.0.0.0:{{ prometheus_listen_port }}'
+prometheus_web_external_url: null
+prometheus_log_level: info
+prometheus_config_user_template: ../files/prometheus_user_config.yml
+mq_alertrules: ../files/mq_alertrules.yml
+
+###########  Prometheus Global scrap settings ############
+
+prometheus_scrape_interval: 15s
+prometheus_scrape_timeout: 10s
+prometheus_evaluation_interval: 15s
+
+########## Prometheus service account, group & service name ##########
+
+prometheus_user: prometheus
+prometheus_group: prometheus
+prometheus_service_name: prometheus
+

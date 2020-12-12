@@ -1,0 +1,18 @@
+[Unit]
+Description=Grafana instance
+Wants=network-online.target
+After=network-online.target
+ 
+[Service]
+User={{ grafana_user }}
+Group={{ grafana_group }}
+Type=notify
+WorkingDirectory={{ grafana_install_path }}
+ExecStart={{ grafana_install_path }}/bin/grafana-server -config {{ grafana_install_path }}/conf/grafana.ini -homepath {{ grafana_install_path }}
+
+LimitNOFILE=10000
+TimeoutStopSec=20
+
+[Install]
+WantedBy=multi-user.target
+

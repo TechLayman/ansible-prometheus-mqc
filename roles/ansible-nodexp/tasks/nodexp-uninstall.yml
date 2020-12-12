@@ -1,0 +1,23 @@
+---
+- name: "Cleaning up nodexp services"
+  shell: "{{ item }}"
+  with_items:
+    - "systemctl stop {{ nodexp_service_name }}"
+    - "systemctl disable {{ nodexp_service_name }}"
+- pause:
+    seconds: 5
+    
+- name: "Removing nodexp directories"
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ nodexp_install_path }}"
+    - "/etc/systemd/system/{{ nodexp_service_name }}.service"
+
+- name: "Removing Pormetheus user and group"
+  user:
+    name: "{{ nodexp_user }}"
+    group: "{{ nodexp_group }}"
+    state: absent
+

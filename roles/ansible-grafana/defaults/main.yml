@@ -1,0 +1,10 @@
+---
+# defaults file for ansible-grafana
+
+prometheus_datasource_url: 'http://localhost:9061'
+grafana_install_path: "/opt/insight/grafana-{{ grafana_version }}"
+grafana_user_config_file: null
+
+grafana_user: grafana
+grafana_group: grafana
+grafana_service_name: grafana

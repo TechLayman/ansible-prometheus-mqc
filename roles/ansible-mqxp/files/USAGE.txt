@@ -1,0 +1,30 @@
+## There is sample script(QMGR.startAgentBluePrint.sh) file which can be used to update nessary flags for mq_xporter program
+#########################################
+
+#Update below flags as per your queue manager which you want to connect and poll the metrics
+
+#There are many other flags which mq_exporter accepts. add them based on your requirements
+
+#./mq_exporter --help will give complete flag information
+
+ARGS="-ibmmq.queueManager=MQEG01"
+ARGS="$ARGS -ibmmq.client"
+ARGS="$ARGS -ibmmq.channel=ADMIN.CHL"
+ARGS="$ARGS -ibmmq.connName=redhat21.techlayman.net(1417)"
+ARGS="$ARGS -ibmmq.httpListenPort=8172"
+ARGS="$ARGS -ibmmq.httpMetricPath=/mqeg01"
+
+ARGS="$ARGS -ibmmq.monitoredQueues=$queues"
+ARGS="$ARGS -ibmmq.monitoredChannels=$channels"
+ARGS="$ARGS -ibmmq.monitoredTopics=#"
+ARGS="$ARGS -ibmmq.monitoredSubscriptions=*"
+ARGS="$ARGS -ibmmq.httpListenHost=localhost"
+ARGS="$ARGS -rediscoverInterval=1h"
+ARGS="$ARGS -ibmmq.useStatus=true"
+ARGS="$ARGS -log.level=error"
+
+# Make sure your mq_exporter location at the end of the file 
+# exec /var/mqm/mqexporters/bin/mq_exporter $ARGS
+
+# Finally run the script file which supply the custom values and redirect out logs to /var/mqm/mqexporters/logs directory
+# Example: nohup ./MQEG01.startAgent.sh > ../logs/MQEG01.log &

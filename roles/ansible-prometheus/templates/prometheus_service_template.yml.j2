@@ -1,0 +1,24 @@
+[Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+ 
+[Service]
+User={{ prometheus_user }}
+Group={{ prometheus_group }}
+Type=simple
+ExecStart={{ prometheus_install_path }}/bin/prometheus \
+	      --config.file={{ prometheus_install_path }}/config/prometheus.yml \
+	      --storage.tsdb.path={{ prometheus_install_path }}/data \
+	      --storage.tsdb.retention.time={{ prometheus_retention_time }} \
+	      --web.console.templates={{ prometheus_install_path }}/consoles \
+	      --web.console.libraries={{ prometheus_install_path }}/console_libraries \
+	      {% if ( prometheus_web_external_url is defined ) and ( prometheus_web_external_url != None ) %}
+              --web.external-url={{ prometheus_web_external_url }} \
+              {% endif %}
+	      --web.listen-address={{ prometheus_listen_address }} \
+	      --log.level={{ prometheus_log_level }}
+ 
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,23 @@
+---
+- name: "Cleaning up prometheus services"
+  shell: "{{ item }}"
+  with_items:
+    - "systemctl stop {{ prometheus_service_name }}"
+    - "systemctl disable {{ prometheus_service_name }}"
+- pause:
+    seconds: 5
+    
+- name: "Removing prometheus directories"
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ prometheus_install_path }}"
+    - "/etc/systemd/system/{{ prometheus_service_name }}.service"
+
+- name: "Removing Pormetheus user and group"
+  user:
+    name: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+    state: absent
+

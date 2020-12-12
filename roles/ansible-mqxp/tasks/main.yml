@@ -1,0 +1,79 @@
+---
+- name: Ensure MQ client installed on target server
+  shell:
+    cmd: "rpm -qa | grep MQSeriesClient | wc -l"
+    warn: no
+  register: installedPackageCount
+  changed_when: false
+
+- name: "Checking mq_exporter exicutable state"
+  stat:
+    path: "/var/mqm/mqexporters/bin/mq_exporter"
+  register: isExicutableFound
+
+- block:
+  - name: creating binary folder on target server
+    file:
+      path: /tmp/mqclient
+      state: directory
+
+  - name: Extract Binaries
+    unarchive:
+      src: "{{ mqclient_tar_location }}"
+      dest: "/tmp/mqclient"
+      extra_opts: [--strip-components=1]
+
+  - name: Accept License
+    command: "./mqlicense.sh -accept"
+    args:
+      chdir: /tmp/mqclient/
+    register: acceptLicence
+    
+  - name: new installation of MQ
+    shell: "ls | grep MQSeries | egrep -v 'Msg' | xargs rpm -ivh"
+    args:
+      chdir: /tmp/mqclient/
+    
+  - name: settingup the environement after installing mq client
+    shell: "/opt/mqm/bin/setmqinst -i -n Installation1"
+  when: user_action == 'install' and installedPackageCount.stdout == '0'
+
+- block:
+  - name: "Create mqexporter directories"
+    file:
+      path: "{{ item }}"
+      state: directory
+      owner: "mqm"
+      group: "mqm"
+      mode: "u=rwx,g=rwx,o=r"
+    with_items:
+      - "/var/mqm/mqexporters"
+      - "/var/mqm/mqexporters/bin"
+      - "/var/mqm/mqexporters/logs"
+  
+  - name: "Copying mq_exporter exicutable & QMGR.startAgentBluePrint.sh to target"
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      owner: "mqm"
+      group: "mqm"
+      mode: 0775
+    with_items:
+      - { src: 'mq_exporter', dest: '/var/mqm/mqexporters/bin' }
+      - { src: 'QMGR.startAgentBluePrint.sh', dest: '/var/mqm/mqexporters/bin' }
+      - { src: 'USAGE.txt', dest: '/var/mqm/mqexporters/bin' }
+  when: user_action == 'install' and isExicutableFound.stat.exists == False
+
+- name: cleaning running MQ exporters
+  shell:
+    cmd: 'ps aux | grep -ie mqexporter | awk "{print $2}" | xargs kill -9'
+  changed_when: false
+  when: user_action == 'uninstall'
+
+- name: Cleaning existing MQ packages
+  shell:
+    cmd: 'rpm -qa | grep MQSeries | xargs rpm -ev'
+    warn: no
+  register: uninstall_status
+  changed_when: false
+  when: user_action == 'uninstall' and installedPackageCount.stdout == '1'

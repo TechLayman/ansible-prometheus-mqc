@@ -1,0 +1,15 @@
+---
+###########  defaults file for ansible-alertmanager #########
+ 
+alertmanager_install_path: /opt/insight/alertmanager-{{ alertmanager_version }}
+alertmanager_listen_address: ':{{ alertmanager_listen_port }}'
+alertmanager_web_external_url: http://ec2-18-223-206-78.us-east-2.compute.amazonaws.com:{{ alertmanager_listen_port }} 
+alertmanager_log_level: info
+alertmanager_config_file: ../files/alertmanager_config.yml
+
+######### Prometheus service account, group & service name ##########
+
+alertmanager_user: alertmanager
+alertmanager_group: alertmanager
+alertmanager_service_name: alertmanager
+

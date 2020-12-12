@@ -1,0 +1,23 @@
+---
+- name: "Cleaning up alertmanager services"
+  shell: "{{ item }}"
+  with_items:
+    - "systemctl stop {{ alertmanager_service_name }}"
+    - "systemctl disable {{ alertmanager_service_name }}"
+- pause:
+    seconds: 5
+    
+- name: "Removing alertmanager directories"
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ alertmanager_install_path }}"
+    - "/etc/systemd/system/{{ alertmanager_service_name }}.service"
+
+- name: "Removing alertmanger user and group"
+  user:
+    name: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_group }}"
+    state: absent
+

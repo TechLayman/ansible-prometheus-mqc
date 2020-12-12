@@ -1,0 +1,5 @@
+---
+- name: "Gather facts to decrease the exicution burden"
+  stat:
+    path: "/tmp/grafana-{{ grafana_version }}.linux-amd64.tar.gz"
+  register: grafana_tar_status

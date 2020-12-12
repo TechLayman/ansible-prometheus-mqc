@@ -1,0 +1,13 @@
+[Unit]
+Description=nodexp service
+Wants=network-online.target
+After=network-online.target
+ 
+[Service]
+User={{ nodexp_user }}
+Group={{ nodexp_group }}
+Type=simple
+ExecStart={{ nodexp_install_path }}/node_exporter --web.listen-address={{ nodexp_listen_address }}
+
+[Install]
+WantedBy=multi-user.target

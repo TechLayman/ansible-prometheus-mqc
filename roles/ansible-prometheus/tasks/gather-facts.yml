@@ -1,0 +1,5 @@
+---
+- name: "Gather facts to decrease the exicution burden"
+  stat:
+    path: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
+  register: prometheus_tar_status

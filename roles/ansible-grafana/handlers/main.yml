@@ -1,0 +1,14 @@
+---
+# handlers file for ansible-prometheus
+- name: "start {{ grafana_service_name }}"
+  service:
+    name: "{{ grafana_service_name }}"
+    state: started
+- name: "stop {{ grafana_service_name }}"
+  service:
+    name: "{{ grafana_service_name }}"
+    state: stopped
+- name: "restart {{ grafana_service_name }}"
+  service:
+    name: "{{ grafana_service_name }}"
+    state: restarted

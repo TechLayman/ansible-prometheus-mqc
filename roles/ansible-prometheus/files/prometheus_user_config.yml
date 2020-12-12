@@ -1,0 +1,44 @@
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+
+rule_files:
+  - mq_alertrules.yml
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - localhost:9063
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9061' ]
+        labels:
+          host: 'promserver'
+
+  - job_name: 'node_exporters'
+    scrape_interval: 10s
+    static_configs:
+      - targets: [ 'localhost:8180' ]
+        labels:
+          host: 'promserver'
+
+  - job_name: 'MQAP01'
+    scrape_interval: 10s
+    metrics_path: '/mqap01'
+    static_configs:
+      - targets: [ 'localhost:8171' ]
+        labels:
+          host: 'redhat21'
+
+  - job_name: 'MQEG01'
+    scrape_interval: 10s
+    metrics_path: '/mqeg01'
+    static_configs:
+      - targets: [ 'localhost:8172' ]
+        labels:
+          host: 'redhat21'
+
+

@@ -1,0 +1,31 @@
+---
+# tasks file for ansible-grafana
+- name: "Role Usage.."
+  debug:
+    msg: 'Pass the correct Action with variable "grafana_activity:" [ start | stop | restart | install | uninstall ]'
+  when: grafana_activity not in ["start", "stop", "restart", "install", "uninstall"]
+
+- command: /bin/true
+  notify:
+    - "stop {{ grafana_service_name }}"
+  when: grafana_activity == "stop"
+- command: /bin/true
+  notify:
+    - "start {{ grafana_service_name }}"
+  when: grafana_activity == "start"
+- command: /bin/true
+  notify:
+    - "restart {{ grafana_service_name }}"
+  when: grafana_activity == "restart"
+
+- name: "Uninstalling Prometheus"
+  include: grafana-uninstall.yml
+  when: grafana_activity == "uninstall"
+
+- block:
+  - name: "Gathering facts"
+    include: gather-facts.yml
+
+  - name: "Installing grafana"
+    include: grafana-install.yml
+  when: grafana_activity == "install"

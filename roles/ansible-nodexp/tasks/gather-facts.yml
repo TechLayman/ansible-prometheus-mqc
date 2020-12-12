@@ -1,0 +1,5 @@
+---
+- name: "Gather facts to decrease the exicution burden"
+  stat:
+    path: "/tmp/node_exporter-{{ nodexp_version }}.linux-amd64.tar.gz"
+  register: nodexp_tar_status

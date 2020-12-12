@@ -1,0 +1,13 @@
+global:
+  scrape_interval:  {{ prometheus_scrape_interval | default('15s') }}
+  scrape_timeout: {{ prometheus_scrape_timeout | default('10s') }}
+  evaluation_interval:  {{ prometheus_evaluation_interval | default('15s') }}
+
+scrape_configs:
+
+  # Monitoring prometheus metrics
+  - job_name: '{{ prometheus_service_name }}'
+    static_configs:
+      - targets: ['localhost:{{ prometheus_listen_port }}']
+
+

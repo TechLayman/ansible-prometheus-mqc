@@ -1,0 +1,5 @@
+---
+- name: "Gather facts to decrease the exicution burden"
+  stat:
+    path: "/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64.tar.gz"
+  register: alertmanager_tar_status

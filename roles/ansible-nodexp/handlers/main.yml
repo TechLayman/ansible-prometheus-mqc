@@ -1,0 +1,14 @@
+---
+# handlers file for ansible-nodexp
+- name: "start {{ nodexp_service_name }}"
+  service:
+    name: "{{ nodexp_service_name }}"
+    state: started
+- name: "stop {{ nodexp_service_name }}"
+  service:
+    name: "{{ nodexp_service_name }}"
+    state: stopped
+- name: "restart {{ nodexp_service_name }}"
+  service:
+    name: "{{ nodexp_service_name }}"
+    state: restarted

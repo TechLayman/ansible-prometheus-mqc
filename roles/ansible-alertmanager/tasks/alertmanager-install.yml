@@ -1,0 +1,86 @@
+---
+- name: "Create alertmanager service group"
+  group:
+    name: "{{ alertmanager_group }}"
+    state: present
+
+- name: "Create alertmanager service account"
+  user:
+    name: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_group }}"
+    createhome: no
+    shell: "/sbin/nologin"
+    comment: "alertmanager service account"
+    state: present
+
+- name: "download alertmanager binaries"
+  get_url:
+    url: "{{ alertmanager_download_url }}"
+    dest: "/tmp"
+  retries: 5
+  delay: 10
+  when: alertmanager_tar_status.stat.exists == false
+
+- name: "Create alertmanager directories"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_group }}"
+    mode: "u=rwx,g=rx,o=rx"
+  with_items:
+    - "{{ alertmanager_install_path }}"
+    - "{{ alertmanager_install_path }}/bin"
+    - "{{ alertmanager_install_path }}/config"
+    - "{{ alertmanager_install_path }}/log"
+    - "{{ alertmanager_install_path }}/data"
+
+- name: "expand alertmanager binaries"
+  unarchive:
+    src: "/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64.tar.gz"
+    dest: "/tmp"
+    remote_src: yes
+
+- name: "copy binaries to actual alertmanager home location"
+  copy: 
+    src: "{{ item.src }}" 
+    remote_src: yes    
+    dest: "{{ item.dest }}"
+    owner: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_group }}"
+    mode: 0755
+  with_items:
+    - { src: '/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64/alertmanager', dest: '{{ alertmanager_install_path }}/bin' }
+    - { src: '/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64/amtool', dest: '{{ alertmanager_install_path }}/bin' }
+    - { src: '/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64/alertmanager.yml', dest: '{{ alertmanager_install_path }}/config/alertmanager.yml_original' }
+    - { src: '/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64/NOTICE', dest: '{{ alertmanager_install_path }}' }
+    - { src: '/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64/LICENSE', dest: '{{ alertmanager_install_path }}' }
+    
+- name: "copying alertmanager configuration file"
+  copy:
+    src: "{{ alertmanager_config_file }}"
+    dest: "{{ alertmanager_install_path }}/config/alertmanager.yml"
+    owner: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_group }}"
+    mode: "u=rwx,g=rx,o=rx"
+
+- name: "creating alertmanager service"
+  template:
+    src: "alertmanager_service_template.yml.j2"
+    dest: "/etc/systemd/system/{{ alertmanager_service_name }}.service"
+    owner: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_group }}"
+    mode: "u=rwx,g=r,o=r"
+
+- name: "reloading systemd daemon"
+  shell: "systemctl daemon-reload"
+  notify:
+    - "start {{ alertmanager_service_name }}"
+
+#- name: "cleaning up alertmanager temp files"
+#  file:
+#    path: "{{ item }}"
+#    state: absent
+#  with_items:
+#    - "/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64.tar.gz"
+#    - "/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64"

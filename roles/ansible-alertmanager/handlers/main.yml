@@ -1,0 +1,14 @@
+---
+# handlers file for ansible-alertmanager
+- name: "start {{ alertmanager_service_name }}"
+  service:
+    name: "{{ alertmanager_service_name }}"
+    state: started
+- name: "stop {{ alertmanager_service_name }}"
+  service:
+    name: "{{ alertmanager_service_name }}"
+    state: stopped
+- name: "restart {{ alertmanager_service_name }}"
+  service:
+    name: "{{ alertmanager_service_name }}"
+    state: restarted

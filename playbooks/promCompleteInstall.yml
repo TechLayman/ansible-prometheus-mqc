@@ -1,0 +1,31 @@
+---
+- hosts: promservers
+  user: root 
+  become: yes
+  vars:
+    user_action:
+  roles:
+    - role: ansible-prometheus
+      prometheus_activity: "{{ user_action }}"
+      prometheus_version: 2.23.0 
+      prometheus_listen_port: 9061
+
+    - role: ansible-grafana
+      grafana_activity: "{{ user_action }}"
+      grafana_version: 7.3.5
+      grafana_port: 9062
+
+    - role: ansible-alertmanager
+      alertmanager_activity: "{{ user_action }}"
+      alertmanager_version: 0.21.0
+      alertmanager_listen_port: 9063
+
+    - role: ansible-nodexp
+      nodexp_activity: "{{ user_action }}"
+      nodexp_version: 1.0.1
+      nodexp_listen_port: 8180
+
+    - role: ansible-mqxp 
+      mqxp_activity: "{{ user_action }}"
+      mqclient_tar_location: /shares/repo/mqclient_redhat/9.2.1.0-IBM-MQC-LinuxX64.tar.gz
+ 

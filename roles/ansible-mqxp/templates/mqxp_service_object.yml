@@ -1,0 +1,13 @@
+DEFINE SERVICE(MQPROMETHEUS)         +
+       CONTROL(QMGR)               +
+       SERVTYPE(SERVER)            +
+       STARTCMD('{{ mqxp_install_path }}/bin/+QMNAME+_mqxp.sh') +
+       STARTARG(+QMNAME+)          +
+       STOPCMD('/usr/bin/kill ' )  +
+       STOPARG(+MQ_SERVER_PID+)    +
+       STDOUT('{{ mqxp_install_path }}/log/+QMNAME+_mqxp_stdout.out')  +
+       STDERR('{{ mqxp_install_path }}/log/+QMNAME+_mqxp_stderr.out')  +
+       DESCR('MQ exporter for Prometheus')
+
+* Start it manually now; will be automatically started on future qmgr startup
+START SERVICE(MQPROMETHEUS)

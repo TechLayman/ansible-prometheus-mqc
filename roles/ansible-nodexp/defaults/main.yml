@@ -1,0 +1,10 @@
+---
+
+nodexp_install_path: /opt/insight/nodexp-{{ nodexp_version }}
+nodexp_listen_address: '0.0.0.0:{{ nodexp_listen_port }}'
+nodexp_log_level: info
+
+nodexp_user: nodexp
+nodexp_group: nodexp
+nodexp_service_name: nodexp
+

@@ -1,0 +1,30 @@
+groups:
+- name: mq-alert.rules
+  rules:
+  - alert: InstanceDown
+    expr: up == 0
+    for: 1m
+    labels:
+      severity: "CRITICAL"
+    annotations:
+      summary: "Endpoint {{ $labels.instance }} down"
+      description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minutes."
+
+  - alert: QDepthIncreasing
+    expr: ibmmq_queue_depth > 100
+    for: 1m
+    labels:
+      severity: "MAJOR"
+    annotations:
+      summary: 'NODE - {{ $labels.host }} - {{ $labels.qmgr }} - {{ $labels.queue }} - {{ $value }}'
+      description: '{{ $labels.queue }} -  Depth is increasing'
+
+  - alert: ChlRetrying
+    expr: ibmmq_channel_status_squash == 1
+    for: 1m
+    labels:
+      severity: "MAJOR"
+    annotations:
+      summary: 'NODE - {{ $labels.host }} - {{ $labels.qmgr }} - {{ $labels.channel }} - Retrying'
+      description: '{{ $labels.channel }} -  Retrying'
+

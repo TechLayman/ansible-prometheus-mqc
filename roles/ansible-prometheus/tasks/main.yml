@@ -1,0 +1,31 @@
+---
+# tasks file for ansible-prometheus
+- name: "Role Usage.."
+  debug:
+    msg: 'Pass the correct Action with variable "prometheus_activity:" [ start | stop | restart | install | uninstall ]'
+  when: prometheus_activity not in ["start", "stop", "restart", "install", "uninstall"]
+
+- command: /bin/true
+  notify:
+    - "stop {{ prometheus_service_name }}"
+  when: prometheus_activity == "stop"
+- command: /bin/true
+  notify:
+    - "start {{ prometheus_service_name }}"
+  when: prometheus_activity == "start"
+- command: /bin/true
+  notify:
+    - "restart {{ prometheus_service_name }}"
+  when: prometheus_activity == "restart"
+
+- name: "Uninstalling Prometheus"
+  include: prometheus-uninstall.yml
+  when: prometheus_activity == "uninstall"
+
+- block:
+  - name: "Gathering facts"
+    include: gather-facts.yml
+
+  - name: "Installing prometheus"
+    include: prometheus-install.yml
+  when: prometheus_activity == "install"

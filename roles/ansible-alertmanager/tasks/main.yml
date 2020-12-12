@@ -1,0 +1,31 @@
+---
+# tasks file for ansible-alertmanager
+- name: "Role Usage.."
+  debug:
+    msg: 'Pass the correct Action with variable "alertmanager_activity:" [ start | stop | restart | install | uninstall ]'
+  when: alertmanager_activity not in ["start", "stop", "restart", "install", "uninstall"]
+
+- command: /bin/true
+  notify:
+    - "stop {{ alertmanager_service_name }}"
+  when: alertmanager_activity == "stop"
+- command: /bin/true
+  notify:
+    - "start {{ alertmanager_service_name }}"
+  when: alertmanager_activity == "start"
+- command: /bin/true
+  notify:
+    - "restart {{ alertmanager_service_name }}"
+  when: alertmanager_activity == "restart"
+
+- name: "Uninstalling Prometheus"
+  include: alertmanager-uninstall.yml
+  when: alertmanager_activity == "uninstall"
+
+- block:
+  - name: "Gathering facts"
+    include: gather-facts.yml
+
+  - name: "Installing alertmanager"
+    include: alertmanager-install.yml
+  when: alertmanager_activity == "install"
