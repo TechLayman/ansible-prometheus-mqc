@@ -64,16 +64,21 @@
       - { src: 'USAGE.txt', dest: '/var/mqm/mqexporters/bin' }
   when: user_action == 'install' and isExicutableFound.stat.exists == False
 
-- name: cleaning running MQ exporters
-  shell:
-    cmd: 'ps aux | grep -ie mqexporter | awk "{print $2}" | xargs kill -9'
-  changed_when: false
-  when: user_action == 'uninstall'
+- block:
+  - name: Get running mq exporters
+    ignore_errors: yes
+    shell: "ps -ef | grep mqexporter | grep -v auto | awk '{print $2}'"
+    register: exporter_running_ps
+ 
+  - name: Kill running processes
+    ignore_errors: yes
+    shell: "kill -9 {{ item }}"
+    with_items: "{{ exporter_running_ps.stdout_lines }}"
 
-- name: Cleaning existing MQ packages
-  shell:
-    cmd: 'rpm -qa | grep MQSeries | xargs rpm -ev'
-    warn: no
-  register: uninstall_status
-  changed_when: false
+  - name: Cleaning existing MQ Client packages
+    shell:
+      cmd: 'rpm -qa | grep MQSeries | xargs rpm -ev'
+      warn: no
+    register: uninstall_status
+    changed_when: false
   when: user_action == 'uninstall' and installedPackageCount.stdout == '1'
