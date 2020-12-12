@@ -11,7 +11,7 @@ cd ~/WorkSpace/ansible/ansible-prometheus-mqc/
 
 ~/WorkSpace/ansible/ansible-prometheus-mqc/playbooks$ ansible-playbook promCompleteInstall.yml -e user_action=install
 
-# Playbook sample
+// Playbook sample
 
 promCompleteInstall.yml 
 
@@ -24,6 +24,7 @@ promCompleteInstall.yml
 
   vars:
     user_action:
+
   roles:
 
 // installating ansible runtime - install location is /opt/insight/prometheus
